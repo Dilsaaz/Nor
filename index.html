@@ -207,14 +207,20 @@ canvas#mkt{width:100%;height:160px;display:block}
 
 <div id="admin-wrap" class="hidden min-h-screen">
 <header class="border-b border-nx-line px-4 py-3 flex justify-between"><div class="serif text-nx-gold">NORVEX ADMIN</div><button type="button" onclick="logout()" class="text-xs gold-border rounded-full px-3">Logout</button></header>
-<main class="max-w-6xl mx-auto p-4 space-y-4">
-<div class="grid sm:grid-cols-3 gap-3">
-<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Users <span id="ad-users" class="serif text-nx-gold text-lg block">0</span></div>
-<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Wallets <span id="ad-wallets" class="serif text-nx-gold text-lg block">$0</span></div>
-<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Pending <span id="ad-pend" class="serif text-nx-gold text-lg block">0</span></div>
-</div>
-<div class="overflow-auto gold-border rounded-xl"><table class="w-full text-xs"><tbody id="ad-dep-rows"></tbody></table></div>
-<div class="overflow-auto gold-border rounded-xl"><table class="w-full text-xs"><tbody id="ad-wd-rows"></tbody></table></div>
+<main class="max-w-6xl mx-auto p-4 space-y-5">
+  <div class="grid grid-cols-3 gap-3">
+    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Users<div id="ad-users" class="serif text-nx-gold text-xl">0</div></div>
+    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Wallets<div id="ad-wallets" class="serif text-nx-gold text-xl">$0</div></div>
+    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Pending<div id="ad-pend" class="serif text-nx-gold text-xl">0</div></div>
+  </div>
+  <section class="bg-nx-card gold-border rounded-2xl p-4">
+    <div class="serif text-nx-gold text-lg mb-3">DEPOSITS</div>
+    <div id="ad-dep-rows" class="space-y-2 text-xs"></div>
+  </section>
+  <section class="bg-nx-card gold-border rounded-2xl p-4">
+    <div class="serif text-nx-gold text-lg mb-3">WITHDRAWS</div>
+    <div id="ad-wd-rows" class="space-y-2 text-xs"></div>
+  </section>
 </main>
 </div>
 
@@ -484,23 +490,25 @@ async function renderAdmin(){
   var allD=deps.data||[];
   var pend=allD.filter(function(d){return d.status==="PENDING";});
   if(el("ad-pend"))el("ad-pend").textContent=pend.length;
-  if(el("ad-dep-rows"))el("ad-dep-rows").innerHTML=allD.map(function(d){
+    if(el("ad-dep-rows"))el("ad-dep-rows").innerHTML=allD.map(function(d){
     var name=(d.profiles&&d.profiles.username)||"—";
-    var btn=(d.status==="PENDING")
-      ?'<button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="text-red-400">X</button>'
-      :d.status;
-    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+d.amount+' · '+(d.hash||"")+'</td><td class="p-2">'+btn+'</td></tr>';
-  }).join("")||'<tr><td class="p-3">No deposits</td></tr>';
+    var st=d.status||"—";
+    var btn=st==="PENDING"
+      ?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1 font-semibold">Approve</button><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1 font-semibold">Reject</button></div>'
+      :'<div class="mt-1 '+(st==="APPROVED"?"text-green-400":"text-red-400")+'">'+st+'</div>';
+    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+d.amount+'</div><div class="break-all text-amber-100/60 mt-1">'+(d.hash||"—")+'</div>'+btn+'</div>';
+  }).join("")||'<div class="text-white/40">No deposits</div>';
   var wds=await sb.from("withdrawals").select("*,profiles(username,wd_address)").order("created_at",{ascending:false});
   var allW=wds.data||[];
   if(el("ad-wd-rows"))el("ad-wd-rows").innerHTML=allW.map(function(w){
     var name=(w.profiles&&w.profiles.username)||"—";
     var addr=w.address||(w.profiles&&w.profiles.wd_address)||"—";
-    var btn=(w.status==="PENDING")
-      ?'<button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="text-red-400">X</button>'
-      :w.status;
-    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+w.amount+' · '+addr+' · '+w.status+'</td><td class="p-2">'+btn+'</td></tr>';
-  }).join("")||'<tr><td class="p-3">No withdraws</td></tr>';
+    var st=w.status||"—";
+    var btn=st==="PENDING"
+      ?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1 font-semibold">Approve</button><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1 font-semibold">Reject</button></div>'
+      :'<div class="mt-1 '+(st==="APPROVED"?"text-green-400":"text-red-400")+'">'+st+'</div>';
+    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+w.amount+'</div><div class="break-all text-amber-100/60 mt-1">'+addr+'</div>'+btn+'</div>';
+  }).join("")||'<div class="text-white/40">No withdraws</div>';
 }
 async function adminDep(id,uid,amt,st){
   var cur=await sb.from("deposits").select("status").eq("id",id).limit(1);
