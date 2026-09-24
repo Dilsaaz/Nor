@@ -128,14 +128,13 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div class="bg-nx-card gold-border rounded-xl p-4">
 <div class="serif text-nx-gold mb-2">DEPOSIT</div>
 <p class="text-xs text-amber-100/60 mb-2">USDT BEP20 · min $80</p>
-  0x8922295A6Ce4116133925253a32B47f2af019d4D
+  <div class="flex items-center gap-2 mb-3">
+  <div id="dep-addr" class="text-[11px] break-all flex-1">0x8922295A6Ce4116133925253a32B47f2af019d4D</div>
+  <button type="button" onclick="copyDep()" class="gold-border rounded-full px-3 py-1 text-xs">Copy</button>
+</div>
 <input id="dep-amt" type="number" class="w-full mb-2" placeholder="Amount"/>
 <input id="dep-hash" class="w-full mb-3" placeholder="Transaction hash"/>
 <button type="button" onclick="submitHash()" class="w-full bg-[#d4af37] text-black rounded-full py-2 font-semibold">Submit</button>
-  <div class="flex items-center gap-2 mb-3">
-  <div id="dep-addr" class="text-[11px] break-all flex-1">0xAPNA_ADDRESS</div>
-  <button type="button" onclick="copyDep()" class="gold-border rounded-full px-3 py-1 text-xs">Copy</button>
-</div>
 <div id="dep-hist" class="text-xs mt-3"></div>
 </div>
 </section>
@@ -232,7 +231,7 @@ var sb=supabase.createClient(SB_URL,SB_KEY);
 var ADMIN_ID="admin",ADMIN_PASS="Norvex@2026";
 var EJ_PUB="tjvq6nXPfo-Kcs_gR",EJ_SVC="service_e8rlj8i",EJ_TPL="template_iwl5w65";
 var pending=null,me=null,isAdmin=false;
-  var DEP_ADDR="0x8922295A6Ce4116133925253a32B47f2af019d4D_ADDRESS";
+var DEP_ADDR="0x8922295A6Ce4116133925253a32B47f2af019d4D_ADDRESS";
 var NEWP=[80,250,500,1500,2500,6000];
 var LOCK_AT="2026-09-24T13:00:00.000Z";
 var STEPS=[
