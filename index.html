@@ -21,6 +21,8 @@ input,select{background:#0a1c12;border:1px solid #2a4a32;color:#e8e2c8;padding:.
 @keyframes sp{to{transform:rotate(360deg)}}
 a[href*="netlify.com"]{display:none!important}
 canvas#mkt{width:100%;height:160px;display:block}
+.tab-btn{background:#0a1c12;color:#c9b87a;border:1px solid transparent;white-space:nowrap}
+.tab-btn.on{background:#d4af37;color:#07140c;border-color:#d4af37;font-weight:600}
 </style>
 </head>
 <body class="min-h-screen">
@@ -94,14 +96,13 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div class="flex items-center gap-2"><div class="logo-n"></div><div class="serif text-nx-gold">NORVEX TRADE</div></div>
 <button type="button" onclick="logout()" class="gold-border rounded-full px-3 py-1 text-xs">Logout</button>
 </header>
-<nav class="flex gap-1 overflow-x-auto px-3 py-2 text-xs border-b border-nx-line">
-<button type="button" onclick="openTab('home')" class="tab-btn gold-border rounded-full px-3 py-1">Home</button>
-<button type="button" onclick="openTab('deposit')" class="tab-btn rounded-full px-3 py-1">Deposit</button>
-
-
-<button type="button" onclick="openTab('withdraw')" class="tab-btn rounded-full px-3 py-1">Withdraw</button>
-
-<button type="button" onclick="openTab('guide')" class="tab-btn rounded-full px-3 py-1">Guide</button>
+<nav class="flex gap-2 overflow-x-auto px-3 py-3 text-sm border-b border-nx-line">
+<button type="button" data-tab="home" onclick="openTab('home')" class="tab-btn on rounded-full px-4 py-2">Home</button>
+<button type="button" data-tab="deposit" onclick="openTab('deposit')" class="tab-btn rounded-full px-4 py-2">Deposit</button>
+<button type="button" data-tab="profit" onclick="openTab('profit')" class="tab-btn rounded-full px-4 py-2">Profit</button>
+<button type="button" data-tab="withdraw" onclick="openTab('withdraw')" class="tab-btn rounded-full px-4 py-2">Withdraw</button>
+<button type="button" data-tab="team" onclick="openTab('team')" class="tab-btn rounded-full px-4 py-2">Team</button>
+<button type="button" data-tab="guide" onclick="openTab('guide')" class="tab-btn rounded-full px-4 py-2">Guide</button>
 </nav>
 <main class="max-w-xl mx-auto p-4">
 <section id="tab-home">
@@ -413,7 +414,7 @@ async function drawUser(){
 }
 function openTab(id){
   ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){var e=el("tab-"+t);if(e)e.classList.toggle("hidden",t!==id);});
-  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.toggle("gold-border",b.getAttribute("data-tab")===id);});
+  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
 }
   function copyDep(){navigator.clipboard.writeText(DEP_ADDR);pop("Copied","BEP20 address copied");}
 async function submitHash(){
