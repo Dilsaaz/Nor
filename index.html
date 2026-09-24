@@ -501,7 +501,8 @@ async function adminWd(id,uid,amt,st){
 function seedCandles(){
   candles=[];px=67840+Math.random()*400;
   for(var i=0;i<80;i++){
-    var o=px,ch=(Math.random()-0.48)*42,c=o+ch,h=Math.max(o,c)+Math.random()*18,l=Math.min(o,c)-Math.random()*18;
+        var o=px,ch=(Math.random()-0.48)*42,c=o+ch,h=Math.max(o,c)+Math.random()*18,l=Math.min(o,c)-Math.random()*18;
+      candles.push({o:o,h:h,l:l,c:c});px=c;  
     candles.push({o:o,h:h,l:l,c:c});px=c;
   }
 }
