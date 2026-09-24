@@ -280,7 +280,15 @@ async function loadMe(){
   var p=await sb.from("profiles").select("*").eq("id",s.data.user.id).limit(1);
   me=(p.data&&p.data[0])||null;return me;
 }
-function logout(){sb.auth.signOut();me=null;el("dash-wrap").classList.add("hidden");el("admin-wrap").classList.add("hidden");el("auth-wrap").classList.remove("hidden");showScreen("landing");}
+function logout(){
+  if(window._t){clearInterval(window._t);window._t=null;}
+  sb.auth.signOut();
+  me=null;
+  el("dash-wrap").classList.add("hidden");
+  el("admin-wrap").classList.add("hidden");
+  el("auth-wrap").classList.remove("hidden");
+  showScreen("landing");
+}
 function adminLogin(){
   if(el("ad-id").value.trim()!==ADMIN_ID||el("ad-pass").value!==ADMIN_PASS){pop("Error","Wrong admin");return;}
   isAdmin=true;el("auth-wrap").classList.add("hidden");el("admin-wrap").classList.remove("hidden");renderAdmin();
