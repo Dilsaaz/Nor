@@ -98,7 +98,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <button type="button" onclick="openTab('home')" class="tab-btn gold-border rounded-full px-3 py-1">Home</button>
 <button type="button" onclick="openTab('deposit')" class="tab-btn rounded-full px-3 py-1">Deposit</button>
 <button type="button" onclick="openTab('trade')" class="tab-btn rounded-full px-3 py-1">Live</button>
-<button type="button" onclick="openTab('profit')" class="tab-btn rounded-full px-3 py-1">Profit</button>
+
 <button type="button" onclick="openTab('withdraw')" class="tab-btn rounded-full px-3 py-1">Withdraw</button>
 <button type="button" onclick="openTab('team')" class="tab-btn rounded-full px-3 py-1">Team</button>
 <button type="button" onclick="openTab('guide')" class="tab-btn rounded-full px-3 py-1">Guide</button>
@@ -112,8 +112,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 </div>
 <div class="bg-nx-card gold-border rounded-xl p-3 mb-3">
 <div class="flex justify-between text-xs mb-2"><span>BTC/USDT</span><span id="px-home" class="text-green-400">—</span></div>
-<canvas id="mkt" height="160"></canvas>
-</div>
+<div style="height:160px"><canvas id="mkt"></canvas></div>
 <div class="bg-nx-card gold-border rounded-xl p-4 mb-3">
 <div class="serif text-nx-gold mb-2">INVESTMENT PACKAGES</div>
 <div id="pkg-box" class="grid grid-cols-2 gap-2"></div>
@@ -136,12 +135,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 </div>
 </section>
 <section id="tab-trade" class="hidden">
-<div class="bg-nx-card gold-border rounded-xl p-3">
-<div class="flex justify-between text-xs mb-2"><span>BTC/USDT LIVE</span><span id="px-live" class="text-green-400">—</span></div>
-<canvas id="mkt-live" height="200"></canvas>
-</div>
-</section>
-<section id="tab-profit" class="hidden">
+
 <div class="bg-nx-card gold-border rounded-xl p-4">
 <div class="text-[10px]">TOTAL PROFIT</div>
 <div class="serif text-nx-gold text-3xl">$<span id="profit-total">0.00</span></div>
@@ -413,8 +407,7 @@ async function drawUser(){
   }
 }
 function openTab(id){
-  ["home","deposit","trade","profit","withdraw","team","guide"].forEach(function(t){var e=el("tab-"+t);if(e)e.classList.toggle("hidden",t!==id);});
-}
+["home","deposit","profit","withdraw","team","guide"]
 async function submitHash(){
   if(!me)return;
   var amt=Number(el("dep-amt").value),hash=el("dep-hash").value.trim();
@@ -512,28 +505,52 @@ function seedCandles(){
     candles.push({o:o,h:h,l:l,c:c});px=c;
   }
 }
-function drawOHLC(cid,pxid){
-  var cv=el(cid);if(!cv)return;
+function drawOHLC(cid,pxid,hh){
+  var cv=el(cid);if(!cv||!cv.parentElement)return;
+  var box=cv.parentElement;
+  var w=Math.max(260,Math.floor(box.clientWidth-24));
+  var h=hh||160;
+  cv.style.width=w+"px";
+  cv.style.height=h+"px";
   var dpr=Math.min(2,window.devicePixelRatio||1);
-  var w=cv.clientWidth||320,h=cv.clientHeight||160;
-  cv.width=w*dpr;cv.height=h*dpr;
-  var g=cv.getContext("2d");g.scale(dpr,dpr);
+  cv.width=Math.floor(w*dpr);
+  cv.height=Math.floor(h*dpr);
+  var g=cv.getContext("2d");
+  g.setTransform(dpr,0,0,dpr,0,0);
   g.fillStyle="#07140c";g.fillRect(0,0,w,h);
-  g.strokeStyle="#1a3324";g.lineWidth=1;
+  g.strokeStyle="#1a3324";
   for(var y=0;y<5;y++){g.beginPath();g.moveTo(0,h*y/4);g.lineTo(w,h*y/4);g.stroke();}
+  if(!candles.length)return;
   var lo=Math.min.apply(null,candles.map(function(c){return c.l;}));
   var hi=Math.max.apply(null,candles.map(function(c){return c.h;}));
-  var span=hi-lo||1,bw=Math.max(2,(w-8)/candles.length*0.7);
+  var span=hi-lo||1,gap=(w-10)/candles.length,bw=Math.max(2,gap*0.62);
   candles.forEach(function(c,i){
-    var x=4+i*((w-8)/candles.length)+bw/2;
-    var yH=h-((c.h-lo)/span)*(h-12)-6,yL=h-((c.l-lo)/span)*(h-12)-6;
-    var yO=h-((c.o-lo)/span)*(h-12)-6,yC=h-((c.c-lo)/span)*(h-12)-6;
-    var up=c.c>=c.o;g.strokeStyle=up?"#3ddc84":"#e25b4a";g.fillStyle=up?"#3ddc84":"#e25b4a";
+    var x=6+i*gap+bw/2;
+    var yH=8+(1-(c.h-lo)/span)*(h-16);
+    var yL=8+(1-(c.l-lo)/span)*(h-16);
+    var yO=8+(1-(c.o-lo)/span)*(h-16);
+    var yC=8+(1-(c.c-lo)/span)*(h-16);
+    var up=c.c>=c.o;
+    g.strokeStyle=up?"#3ddc84":"#e25b4a";
+    g.fillStyle=up?"#3ddc84":"#e25b4a";
     g.beginPath();g.moveTo(x,yH);g.lineTo(x,yL);g.stroke();
-    var top=Math.min(yO,yC),bh=Math.max(1,Math.abs(yC-yO));
-    g.fillRect(x-bw/2,top,bw,bh);
+    g.fillRect(x-bw/2,Math.min(yO,yC),bw,Math.max(1,Math.abs(yC-yO)));
   });
-  if(pxid&&el(pxid)){el(pxid).textContent=px.toFixed(2);el(pxid).className=candles[candles.length-1].c>=candles[candles.length-1].o?"text-green-400":"text-red-400";}
+  if(pxid&&el(pxid)){
+    el(pxid).textContent=px.toFixed(2);
+    el(pxid).className=candles[candles.length-1].c>=candles[candles.length-1].o?"text-green-400":"text-red-400";
+  }
+}
+function tickMarket(){
+  if(!candles.length)seedCandles();
+  var last=candles[candles.length-1];
+  var ch=(Math.random()-0.49)*22;
+  var o=last.c,c=o+ch;
+  candles.push({o:o,h:Math.max(o,c)+Math.random()*8,l:Math.min(o,c)-Math.random()*8,c:c});
+  if(candles.length>70)candles.shift();
+  px=c;
+  drawOHLC("mkt","px-home",160);
+  drawOHLC("mkt-land","px-land",160);
 }
 function tickMarket(){
   if(!candles.length)seedCandles();
