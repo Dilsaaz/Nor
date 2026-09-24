@@ -407,7 +407,8 @@ async function drawUser(){
   }
 }
 function openTab(id){
-["home","deposit","profit","withdraw","team","guide"]
+  ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){var e=el("tab-"+t);if(e)e.classList.toggle("hidden",t!==id);});
+}
 async function submitHash(){
   if(!me)return;
   var amt=Number(el("dep-amt").value),hash=el("dep-hash").value.trim();
