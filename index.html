@@ -366,7 +366,15 @@ async function drawUser(){
   if(el("trade-left"))el("trade-left").textContent=tr&&tr.ends_at?fmtLeft(new Date(tr.ends_at).getTime()-Date.now()):"—";
   if(el("dep-hist"))el("dep-hist").innerHTML="";
   var wh=await sb.from("withdrawals").select("*").eq("user_id",me.id).order("created_at",{ascending:false});
-if(el("wd-hist"))el("wd-hist").innerHTML=(wh.data||[]).map(function(w){
+if(el("wd-hist"))el("wd-hist").innerHTML=(wh.data||[]).var cut=new Date(LOCK_AT);
+var wh=await sb.from("withdrawals").select("*").eq("user_id",me.id).order("created_at",{ascending:false});
+var list=(wh.data||[]).filter(function(w){return new Date(w.created_at||0)>=cut;});
+if(el("wd-hist"))el("wd-hist").innerHTML=list.map(function(w){
+  var st=String(w.status||"PENDING").toUpperCase();
+  var when=w.created_at?new Date(w.created_at).toLocaleString():"";
+  var col=st==="APPROVED"?"#3ddc84":(st==="REJECTED"?"#e25b4a":"#d4af37");
+  return '<div class="flex justify-between py-2 border-b border-white/10 text-xs"><span>$'+Number(w.amount||0).toFixed(2)+' · '+when+'</span><span style="color:'+col+'">'+st+'</span></div>';
+}).join("")||'<div class="text-xs text-white/40 mt-2">No withdraws yet</div>';map(function(w){
   var st=String(w.status||"PENDING").toUpperCase();
   var when=w.created_at?new Date(w.created_at).toLocaleString():"";
   var col=st==="APPROVED"?"#3ddc84":(st==="REJECTED"?"#e25b4a":"#d4af37");
