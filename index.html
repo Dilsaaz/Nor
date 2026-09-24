@@ -263,7 +263,9 @@ async function hasNewPkg(){
   if(!me)return false;
   var d=await sb.from("deposits").select("amount,status,created_at").eq("user_id",me.id);
   return (d.data||[]).some(function(x){
-    return String(x.status).toUpperCase()==="APPROVED" && NEWP.indexOf(Number(x.amount))>=0 && new Date(x.created_at).getTime()>=new Date(LOCK_AT).getTime();
+    var ok=String(x.status||"").toUpperCase()==="APPROVED";
+    var amt=Number(x.amount);
+    return ok && NEWP.indexOf(amt)>=0;
   });
 }
 async function loadMe(){
@@ -291,7 +293,12 @@ async function sendJoinOtp(){
   var username=el("su-user").value.trim(),email=el("su-email").value.trim(),phone=el("su-phone").value.trim(),pass=el("su-pass").value,refIn=el("su-ref").value.trim();
   if(!username||!email||!pass){pop("Error","Fill all fields");return;}
   pending={username:username,email:email,phone:phone,pass:pass,refIn:refIn,otp:otpCode()};
-  try{if(window.emailjs)await emailjs.send(EJ_SVC,EJ_TPL,{to_email:email,otp:pending.otp,passcode:pending.otp});}catch(e){}
+  try{
+  await emailjs.send(EJ_SVC,EJ_TPL,{to_email:email,otp:pending.otp,passcode:pending.otp,email:email});
+}catch(e){
+  pop("OTP error", String(e&&e.text||e));
+  return;
+}
   el("otp-hint").textContent="Code sent to "+email;
   showScreen("otp");
 }
@@ -364,7 +371,7 @@ async function drawUser(){
   var depAll=await sb.from("deposits").select("user_id,amount,created_at,status");
   function isAct(uid){
     return (depAll.data||[]).some(function(d){
-      return d.user_id===uid&&String(d.status||"").toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(d.amount))>=0&&new Date(d.created_at).getTime()>=new Date(LOCK_AT).getTime();
+      return d.user_id===uid && String(d.status||"").toUpperCase()==="APPROVED" && NEWP.indexOf(Number(d.amount))>=0;
     });
   }
   var tree=(!me.ref_code)?[]:walkTree(rows,me.ref_code,1);
@@ -460,24 +467,32 @@ async function requestWd(){
   await loadMe();drawUser();pop("Notice","Withdraw requested");
 }
 async function renderAdmin(){
-  var prof=await sb.from("profiles").select("id,username,balance");
+  var prof=await sb.from("profiles").select("id,username,balance,wd_address,email");
   var list=prof.data||[];
-  el("ad-users").textContent=list.length;
+  if(el("ad-users"))el("ad-users").textContent=list.length;
   var wal=0;list.forEach(function(u){wal+=Number(u.balance||0);});
-  el("ad-wallets").textContent="$"+wal.toFixed(2);
+  if(el("ad-wallets"))el("ad-wallets").textContent="$"+wal.toFixed(2);
   var deps=await sb.from("deposits").select("*,profiles(username)").order("created_at",{ascending:false});
-  var rows=(deps.data||[]).filter(function(d){return d.status==="PENDING";});
-  el("ad-pend").textContent=rows.length;
-  el("ad-dep-rows").innerHTML=rows.map(function(d){
+  var allD=deps.data||[];
+  var pend=allD.filter(function(d){return d.status==="PENDING";});
+  if(el("ad-pend"))el("ad-pend").textContent=pend.length;
+  if(el("ad-dep-rows"))el("ad-dep-rows").innerHTML=allD.map(function(d){
     var name=(d.profiles&&d.profiles.username)||"—";
-    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+d.amount+'</td><td class="p-2"><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="text-red-400">X</button></td></tr>';
-  }).join("")||'<tr><td class="p-3">No pending deposits</td></tr>';
-  var wds=await sb.from("withdrawals").select("*,profiles(username)").order("created_at",{ascending:false});
-  var wdRows=(wds.data||[]).filter(function(w){return w.status==="PENDING";});
-  el("ad-wd-rows").innerHTML=wdRows.map(function(w){
+    var btn=(d.status==="PENDING")
+      ?'<button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="text-red-400">X</button>'
+      :d.status;
+    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+d.amount+' · '+(d.hash||"")+'</td><td class="p-2">'+btn+'</td></tr>';
+  }).join("")||'<tr><td class="p-3">No deposits</td></tr>';
+  var wds=await sb.from("withdrawals").select("*,profiles(username,wd_address)").order("created_at",{ascending:false});
+  var allW=wds.data||[];
+  if(el("ad-wd-rows"))el("ad-wd-rows").innerHTML=allW.map(function(w){
     var name=(w.profiles&&w.profiles.username)||"—";
-    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+w.amount+' · '+(w.address||"")+'</td><td class="p-2"><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="text-red-400">X</button></td></tr>';
-  }).join("")||'<tr><td class="p-3">No pending withdraws</td></tr>';
+    var addr=w.address||(w.profiles&&w.profiles.wd_address)||"—";
+    var btn=(w.status==="PENDING")
+      ?'<button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="text-green-400">OK</button> <button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="text-red-400">X</button>'
+      :w.status;
+    return '<tr class="border-b border-nx-line"><td class="p-2">'+name+' $'+w.amount+' · '+addr+' · '+w.status+'</td><td class="p-2">'+btn+'</td></tr>';
+  }).join("")||'<tr><td class="p-3">No withdraws</td></tr>';
 }
 async function adminDep(id,uid,amt,st){
   var cur=await sb.from("deposits").select("status").eq("id",id).limit(1);
