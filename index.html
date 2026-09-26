@@ -486,11 +486,16 @@ async function requestWd(){
   var amt=Number(el("wd-amt").value);
   if(isOld(me)){
   var cap=oldCap(me), used=Number(me.old_wd||0), left=+(cap-used).toFixed(2);
+    var left=+(cap-used).toFixed(2);
   if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return}
   if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return}
 }
   var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
   if(!amt||amt>can){pop("Withdraw","Only profit + bonus. Available $"+can);return;}
+  if(Number(me.balance||0)<=0){pop("Wallet","Balance is $0");return}
+if(amt>Number(me.balance||0)){pop("Wallet","Not enough balance");return}
+var pend=await sb.from("withdrawals").select("id").eq("user_id",me.id).eq("status","PENDING");
+if(pend.data&&pend.data.length){pop("Wait","One withdraw already pending");return}
   var fee=+(amt*0.12).toFixed(2),net=+(amt-fee).toFixed(2);
   await sb.from("profiles").update({balance:Number(me.balance||0)-amt,profit:Math.max(0,Number(me.profit||0)-amt)}).eq("id",me.id);
   var w=await sb.from("withdrawals").insert({user_id:me.id,amount:amt,fee:fee,net:net,address:me.wd_address,status:"PENDING"});
