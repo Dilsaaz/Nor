@@ -274,6 +274,11 @@ async function hasNewPkg(){
     return ok && NEWP.indexOf(amt)>=0;
   });
 }
+  function isOld(u){return u&&u.is_new!==true&&Number(u.old_lock||0)>0}
+function oldCap(u){
+  if(!isOld(u))return Infinity;
+  return +(Number(u.old_lock)*Number(u.old_unlock||0)/100).toFixed(2);
+}
 async function loadMe(){
   var s=await sb.auth.getUser();
   if(!s.data||!s.data.user){me=null;return null;}
@@ -323,7 +328,7 @@ async function verifyOtp(){
   if(res.error){closePop();pop("Error",res.error.message);return;}
   var uid=res.data.user&&res.data.user.id;if(!uid){closePop();pop("Error","Signup failed");return;}
   var code="NV-"+pending.username.toUpperCase().replace(/\s+/g,"");
-  var ins=await sb.from("profiles").insert({id:uid,username:pending.username,email:pending.email,phone:pending.phone,ref_code:code,sponsor:pending.refIn||"",balance:0,profit:0,ref_bonus:0});
+  var ins=await sb.from("profiles").insert({id:uid,username:pending.username,email:pending.email,phone:pending.phone,ref_code:code,sponsor:pending.refIn||"",balance:0,profit:0,ref_bonus:0,is_new:true,old_lock:0,old_unlock:0,old_wd:0});
   if(ins.error){closePop();pop("Error",ins.error.message);return;}
   if(pending.refIn){
     var sp=await sb.from("profiles").select("id").eq("ref_code",pending.refIn).limit(1);
@@ -479,6 +484,11 @@ async function requestWd(){
   if(!me)return;
   if(!(await hasNewPkg())){pop("Locked","Activate $80 package");return;}
   var amt=Number(el("wd-amt").value);
+  if(isOld(me)){
+  var cap=oldCap(me), used=Number(me.old_wd||0), left=+(cap-used).toFixed(2);
+  if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return}
+  if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return}
+}
   var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
   if(!amt||amt>can){pop("Withdraw","Only profit + bonus. Available $"+can);return;}
   var fee=+(amt*0.12).toFixed(2),net=+(amt-fee).toFixed(2);
@@ -526,12 +536,21 @@ async function adminDep(id,uid,amt,st){
     var p=await sb.from("profiles").select("balance,sponsor,ref_bonus").eq("id",uid).limit(1);
     if(p.data&&p.data[0]){
       await sb.from("profiles").update({balance:Number(p.data[0].balance||0)+Number(amt)}).eq("id",uid);
+      if(Number(amt)>=80){
+  var row=p.data[0];
+  if(row.is_new!==true && Number(row.old_lock||0)>0 && Number(row.old_unlock||0)<50){
+    await sb.from("profiles").update({old_unlock:50}).eq("id",row.id);
+  }
+}
       var code=(p.data[0].sponsor||"").trim();
       if(code){
         var sp=await sb.from("profiles").select("id,balance,ref_bonus").eq("ref_code",code).limit(1);
         if(sp.data&&sp.data[0]&&sp.data[0].id!==uid){
           var b=+(Number(amt)*0.05).toFixed(2);
           await sb.from("profiles").update({balance:Number(sp.data[0].balance||0)+b,ref_bonus:Number(sp.data[0].ref_bonus||0)+b}).eq("id",sp.data[0].id);
+          if(Number(amt)>=80 && sp.data[0].is_new!==true && Number(sp.data[0].old_lock||0)>0 && Number(sp.data[0].old_unlock||0)<100){
+  await sb.from("profiles").update({old_unlock:100}).eq("id",sp.data[0].id);
+}
         }
       }
     }
