@@ -129,9 +129,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div class="bg-nx-card gold-border rounded-xl p-4">
 <div class="serif text-nx-gold mb-2">DEPOSIT</div>
 <p class="text-xs text-amber-100/60 mb-2">USDT BEP20 · min $80</p>
-  <div class="flex items-center gap-2 mb-3">
-  <div id="dep-addr" class="text-[11px] break-all flex-1">0x8922295A6Ce4116133925253a32B47f2af019d4D</div>
-  <button type="button" onclick="copyDep()" class="gold-border rounded-full px-3 py-1 text-xs">Copy</button>
+<div class="flex items-center gap-2 mb-3"><span id="dep-addr" class="break-all text-sm">0x8922295A6Ce4116133925253a32B47f2af019d4D</span><button type="button" class="rounded-full px-3 py-1 text-xs" onclick="copyDep()">Copy</button></div>
 </div>
 <input id="dep-amt" type="number" class="w-full mb-2" placeholder="Amount"/>
 <input id="dep-hash" class="w-full mb-3" placeholder="Transaction hash"/>
@@ -450,7 +448,7 @@ function openTab(id){
   ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){var e=el("tab-"+t);if(e)e.classList.toggle("hidden",t!==id);});
   document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
 }
-  function copyDep(){navigator.clipboard.writeText(DEP_ADDR);pop("Copied","BEP20 address copied");}
+  function copyDep(){var a="0x8922295A6Ce4116133925253a32B47f2af019d4D";navigator.clipboard.writeText(a).then(function(){pop("Copied","Address copied")});}
 async function submitHash(){
   if(!me)return;
   var amt=Number(el("dep-amt").value),hash=el("dep-hash").value.trim();
