@@ -291,7 +291,6 @@ function openTab(id){
 }
 function tab(id){openTab(id);}
 function copyDep(){navigator.clipboard.writeText("0x8922295A6Ce4116133925253a32B47f2af019d4D").then(function(){pop("Copied","Address copied");});}
-</script>
 async function sendJoinOtp(){
   var username=el("su-user").value.trim(),email=el("su-email").value.trim(),phone=el("su-phone").value.trim(),pass=el("su-pass").value,refIn=el("su-ref").value.trim();
   if(!username||!email||!pass){pop("Error","Fill all fields");return;}
