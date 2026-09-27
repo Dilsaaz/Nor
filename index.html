@@ -446,7 +446,7 @@ async function drawUser(){
   }
 }
 function openTab(id){
-  ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
+["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
     var e=document.getElementById("tab-"+t);
     if(e)e.style.display=(t===id)?"block":"none";
   });
