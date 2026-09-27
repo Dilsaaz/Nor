@@ -444,8 +444,12 @@ async function drawUser(){
   }
 }
 function openTab(id){
-  ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){var e=el("tab-"+t);if(e)e.classList.toggle("hidden",t!==id);});
-  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
+  ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
+    var e=el("tab-"+t); if(e) e.classList.toggle("hidden", t!==id);
+  });
+  document.querySelectorAll(".tab-btn").forEach(function(b){
+    b.classList.toggle("on", b.getAttribute("data-tab")===id);
+  });
 }
   function copyDep(){var a="0x8922295A6Ce4116133925253a32B47f2af019d4D";navigator.clipboard.writeText(a).then(function(){pop("Copied","Address copied")});}
 async function submitHash(){
