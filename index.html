@@ -448,12 +448,11 @@ function openTab(id){
   ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
     var e=document.getElementById("tab-"+t);
     if(!e)return;
-    if(t===id)e.classList.remove("hidden");
-    else e.classList.add("hidden");
+    e.style.display=(t===id)?"block":"none";
+    e.classList.toggle("hidden", t!==id);
   });
   document.querySelectorAll("[data-tab]").forEach(function(b){
-    if(b.getAttribute("data-tab")===id)b.classList.add("on");
-    else b.classList.remove("on");
+    b.classList.toggle("on", b.getAttribute("data-tab")===id);
   });
 }
 function tab(id){openTab(id)}
