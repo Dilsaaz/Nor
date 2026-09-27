@@ -445,12 +445,17 @@ async function drawUser(){
 }
 function openTab(id){
   ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
-    var e=el("tab-"+t); if(e) e.classList.toggle("hidden", t!==id);
+    var e=document.getElementById("tab-"+t);
+    if(!e)return;
+    if(t===id)e.classList.remove("hidden");
+    else e.classList.add("hidden");
   });
-  document.querySelectorAll(".tab-btn").forEach(function(b){
-    b.classList.toggle("on", b.getAttribute("data-tab")===id);
+  document.querySelectorAll("[data-tab]").forEach(function(b){
+    if(b.getAttribute("data-tab")===id)b.classList.add("on");
+    else b.classList.remove("on");
   });
 }
+function tab(id){openTab(id)}
   function copyDep(){var a="0x8922295A6Ce4116133925253a32B47f2af019d4D";navigator.clipboard.writeText(a).then(function(){pop("Copied","Address copied")});}
 async function submitHash(){
   if(!me)return;
