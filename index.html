@@ -287,9 +287,13 @@ function openTab(id){
   var ids=["home","deposit","profit","withdraw","team","guide"];
   for(var i=0;i<ids.length;i++){
     var t=ids[i],e=el("tab-"+t);
-    if(e)e.style.display=(t===id)?"block":"none";
+    if(!e)continue;
+    if(t===id){e.classList.remove("hidden");e.style.display="block";}
+    else{e.classList.add("hidden");e.style.display="none";}
   }
-  document.querySelectorAll("[data-tab]").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
+  document.querySelectorAll("[data-tab]").forEach(function(b){
+    b.classList.toggle("on",b.getAttribute("data-tab")===id);
+  });
 }
 function tab(id){openTab(id);}
 function copyDep(){navigator.clipboard.writeText("0x8922295A6Ce4116133925253a32B47f2af019d4D").then(function(){pop("Copied","Address copied");});}
