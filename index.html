@@ -446,16 +446,9 @@ async function drawUser(){
   }
 }
 function openTab(id){
-["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
+  ["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
     var e=document.getElementById("tab-"+t);
-    if(!e)return;
-    e.style.display=(t===id)?"block":"none";
-    e.classList.toggle("hidden", t!==id);
-  var c=document.getElementById("mkt");
-if(c&&c.parentElement)c.parentElement.style.display=(id==="home")?"block":"none";
-  });
-  document.querySelectorAll("[data-tab]").forEach(function(b){
-    b.classList.toggle("on", b.getAttribute("data-tab")===id);
+    if(e)e.style.display=(t===id)?"block":"none";
   });
 }
 function tab(id){openTab(id)}
