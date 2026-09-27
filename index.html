@@ -23,11 +23,11 @@ a[href*="netlify.com"]{display:none!important}
 canvas#mkt{width:100%;height:160px;display:block}
 .tab-btn{background:#0a1c12;color:#c9b87a;border:1px solid transparent;white-space:nowrap}
 .tab-btn.on{background:#d4af37;color:#07140c;border-color:#d4af37;font-weight:600}
-.hidden,.hidden *{display:none!important;height:0!important;overflow:hidden!important;margin:0!important;padding:0!important}
-  #dash-wrap,main{min-height:0!important}
+.hidden{display:none!important}
 </style>
 </head>
 <body class="min-h-screen">
+  <body class="min-h-screen">
 <div id="auth-wrap">
 <header class="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
 <div class="flex items-center gap-3"><div class="logo-n"></div><div><div class="serif text-2xl text-nx-gold">NORVEX</div><div class="text-[10px] tracking-[.2em] text-amber-100/50">TRADE · EARN · GROW</div></div></div>
@@ -91,7 +91,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <input id="ad-pass" type="password" class="w-full mb-3" placeholder="Password"/>
 <button type="button" onclick="adminLogin()" class="w-full bg-[#d4af37] text-black rounded-full py-2 font-semibold">Enter</button>
 </div></section>
-<a href="#admin" class="fixed bottom-2 right-3 text-[10px] text-white/20">admin</a>
+<a href="#admin" class="fixed bottom-2 right-3 text-[10px] text-white/20" onclick="showScreen('adminlogin')">admin</a>
 </div>
 <div id="dash-wrap" class="hidden min-h-screen">
 <header class="border-b border-nx-line px-4 py-3 flex items-center justify-between">
@@ -116,6 +116,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div class="bg-nx-card gold-border rounded-xl p-3 mb-3">
 <div class="flex justify-between text-xs mb-2"><span>BTC/USDT</span><span id="px-home" class="text-green-400">—</span></div>
 <div style="height:160px"><canvas id="mkt"></canvas></div>
+</div>
 <div class="bg-nx-card gold-border rounded-xl p-4 mb-3">
 <div class="serif text-nx-gold mb-2">INVESTMENT PACKAGES</div>
 <div id="pkg-box" class="grid grid-cols-2 gap-2"></div>
@@ -131,8 +132,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div class="bg-nx-card gold-border rounded-xl p-4">
 <div class="serif text-nx-gold mb-2">DEPOSIT</div>
 <p class="text-xs text-amber-100/60 mb-2">USDT BEP20 · min $80</p>
-<div class="flex items-center gap-2 mb-3"><span id="dep-addr" class="break-all text-sm">0x8922295A6Ce4116133925253a32B47f2af019d4D</span><button type="button" class="rounded-full px-3 py-1 text-xs" onclick="copyDep()">Copy</button></div>
-</div>
+<div class="flex items-center gap-2 mb-3"><span id="dep-addr" class="break-all text-sm">0x8922295A6Ce4116133925253a32B47f2af019d4D</span><button type="button" class="rounded-full px-3 py-1 text-xs gold-border" onclick="copyDep()">Copy</button></div>
 <input id="dep-amt" type="number" class="w-full mb-2" placeholder="Amount"/>
 <input id="dep-hash" class="w-full mb-3" placeholder="Transaction hash"/>
 <button type="button" onclick="submitHash()" class="w-full bg-[#d4af37] text-black rounded-full py-2 font-semibold">Submit</button>
@@ -140,7 +140,6 @@ canvas#mkt{width:100%;height:160px;display:block}
 </div>
 </section>
 <section id="tab-profit" class="hidden">
-
 <div class="bg-nx-card gold-border rounded-xl p-4">
 <div class="text-[10px]">TOTAL PROFIT</div>
 <div class="serif text-nx-gold text-3xl">$<span id="profit-total">0.00</span></div>
@@ -169,7 +168,7 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div id="team-list"></div>
 </section>
 <section id="tab-guide" class="hidden">
-<section class="gold-border rounded-2xl p-4 bg-nx-card">
+<div class="gold-border rounded-2xl p-4 bg-nx-card">
 <div class="serif text-nx-gold2 text-lg">NORVEX PLAN</div>
 <p class="text-xs text-[#c9b87a] mt-1">Daily 3% compounding · 24 hour trade · capital locked</p>
 <div class="mt-4 grid grid-cols-2 gap-2 text-center">
@@ -200,29 +199,28 @@ canvas#mkt{width:100%;height:160px;display:block}
 <div>Leader · $2500 pack + Direct 50 · Down 500 · Total 550</div>
 <div>Crown · $6000 pack + Direct 50 · Down 1200 · Total 1250</div>
 </div>
+</div>
 </section>
 </main>
 </div>
-
 <div id="admin-wrap" class="hidden min-h-screen">
 <header class="border-b border-nx-line px-4 py-3 flex justify-between"><div class="serif text-nx-gold">NORVEX ADMIN</div><button type="button" onclick="logout()" class="text-xs gold-border rounded-full px-3">Logout</button></header>
 <main class="max-w-6xl mx-auto p-4 space-y-5">
-  <div class="grid grid-cols-3 gap-3">
-    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Users<div id="ad-users" class="serif text-nx-gold text-xl">0</div></div>
-    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Wallets<div id="ad-wallets" class="serif text-nx-gold text-xl">$0</div></div>
-    <div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Pending<div id="ad-pend" class="serif text-nx-gold text-xl">0</div></div>
-  </div>
-  <section class="bg-nx-card gold-border rounded-2xl p-4">
-    <div class="serif text-nx-gold text-lg mb-3">DEPOSITS</div>
-    <div id="ad-dep-rows" class="space-y-2 text-xs"></div>
-  </section>
-  <section class="bg-nx-card gold-border rounded-2xl p-4">
-    <div class="serif text-nx-gold text-lg mb-3">WITHDRAWS</div>
-    <div id="ad-wd-rows" class="space-y-2 text-xs"></div>
-  </section>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Users<div id="ad-users" class="serif text-nx-gold text-xl">0</div></div>
+<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Wallets<div id="ad-wallets" class="serif text-nx-gold text-xl">$0</div></div>
+<div class="bg-nx-card gold-border rounded-xl p-3 text-xs">Pending<div id="ad-pend" class="serif text-nx-gold text-xl">0</div></div>
+</div>
+<section class="bg-nx-card gold-border rounded-2xl p-4">
+<div class="serif text-nx-gold text-lg mb-3">DEPOSITS</div>
+<div id="ad-dep-rows" class="space-y-2 text-xs"></div>
+</section>
+<section class="bg-nx-card gold-border rounded-2xl p-4">
+<div class="serif text-nx-gold text-lg mb-3">WITHDRAWS</div>
+<div id="ad-wd-rows" class="space-y-2 text-xs"></div>
+</section>
 </main>
 </div>
-
 <div id="popup" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
 <div class="bg-nx-card gold-border rounded-2xl p-5 max-w-sm w-full text-center">
 <div id="pop-spin" class="spin mb-3 hidden"></div>
@@ -237,25 +235,14 @@ var sb=supabase.createClient(SB_URL,SB_KEY);
 var ADMIN_ID="admin",ADMIN_PASS="Norvex@2026";
 var EJ_PUB="tjvq6nXPfo-Kcs_gR",EJ_SVC="service_e8rlj8i",EJ_TPL="template_iwl5w65";
 var pending=null,me=null,isAdmin=false;
-var DEP_ADDR="0x8922295A6Ce4116133925253a32B47f2af019d4D_ADDRESS";
+var DEP_ADDR="0x8922295A6Ce4116133925253a32B47f2af019d4D";
 var NEWP=[80,250,500,1500,2500,6000];
 var LOCK_AT="2026-09-24T13:00:00.000Z";
-var STEPS=[
-  {b:200,dir:5,down:15,tot:20},
-  {b:500,dir:15,down:80,tot:95},
-  {b:2500,dir:25,down:200,tot:225},
-  {b:5000,dir:50,down:500,tot:550},
-  {b:10000,dir:50,down:1200,tot:1250},
-  {b:25000,dir:0,down:0,tot:2500}
-];
+var STEPS=[{b:200,dir:5,down:15,tot:20},{b:500,dir:15,down:80,tot:95},{b:2500,dir:25,down:200,tot:225},{b:5000,dir:50,down:500,tot:550},{b:10000,dir:50,down:1200,tot:1250},{b:25000,dir:0,down:0,tot:2500}];
 var candles=[],px=67840;
 if(window.emailjs){try{emailjs.init({publicKey:EJ_PUB});}catch(e){}}
 function el(id){return document.getElementById(id);}
-function showScreen(n){
-  ["landing","signup","otp","login","adminlogin"].forEach(function(s){
-    var e=el("screen-"+s); if(e) e.classList.toggle("hidden",s!==n);
-  });
-}
+function showScreen(n){["landing","signup","otp","login","adminlogin"].forEach(function(s){var e=el("screen-"+s);if(e)e.classList.toggle("hidden",s!==n);});}
 function pop(t,m){el("pop-spin").classList.add("hidden");el("pop-title").textContent=t;el("pop-msg").textContent=m||"";el("popup").classList.remove("hidden");}
 function popSpin(){el("pop-spin").classList.remove("hidden");el("pop-title").textContent="";el("pop-msg").textContent="";el("popup").classList.remove("hidden");}
 function closePop(){el("popup").classList.add("hidden");}
@@ -264,19 +251,12 @@ function planFor(amt){amt=Number(amt)||0;return amt>=80?{amt:amt,hours:24,label:
 function fmtLeft(ms){if(ms<=0)return "00:00:00";var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60);s=s%60;return (h<10?"0":"")+h+":"+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;}
 function refLink(){return location.origin+(location.pathname||"/")+"?ref="+encodeURIComponent(me&&me.ref_code?me.ref_code:"");}
 function copyRefLink(){navigator.clipboard.writeText(refLink());pop("Copied",refLink());}
+function isOld(u){return u&&u.is_new!==true&&Number(u.old_lock||0)>0;}
+function oldCap(u){if(!isOld(u))return Infinity;return +(Number(u.old_lock)*Number(u.old_unlock||0)/100).toFixed(2);}
 async function hasNewPkg(){
   if(!me)return false;
-  var d=await sb.from("deposits").select("amount,status,created_at").eq("user_id",me.id);
-  return (d.data||[]).some(function(x){
-    var ok=String(x.status||"").toUpperCase()==="APPROVED";
-    var amt=Number(x.amount);
-    return ok && NEWP.indexOf(amt)>=0;
-  });
-}
-  function isOld(u){return u&&u.is_new!==true&&Number(u.old_lock||0)>0}
-function oldCap(u){
-  if(!isOld(u))return Infinity;
-  return +(Number(u.old_lock)*Number(u.old_unlock||0)/100).toFixed(2);
+  var d=await sb.from("deposits").select("amount,status").eq("user_id",me.id);
+  return (d.data||[]).some(function(x){return String(x.status||"").toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(x.amount))>=0;});
 }
 async function loadMe(){
   var s=await sb.auth.getUser();
@@ -286,12 +266,9 @@ async function loadMe(){
 }
 function logout(){
   if(window._t){clearInterval(window._t);window._t=null;}
-  sb.auth.signOut();
-  me=null;
-  el("dash-wrap").classList.add("hidden");
-  el("admin-wrap").classList.add("hidden");
-  el("auth-wrap").classList.remove("hidden");
-  showScreen("landing");
+  sb.auth.signOut();me=null;
+  el("dash-wrap").classList.add("hidden");el("admin-wrap").classList.add("hidden");
+  el("auth-wrap").classList.remove("hidden");showScreen("landing");
 }
 function adminLogin(){
   if(el("ad-id").value.trim()!==ADMIN_ID||el("ad-pass").value!==ADMIN_PASS){pop("Error","Wrong admin");return;}
@@ -299,26 +276,29 @@ function adminLogin(){
 }
 function enterDash(){
   if(!me){logout();return;}
-  el("popup").classList.add("hidden");
-  el("auth-wrap").classList.add("hidden");
-  el("dash-wrap").classList.remove("hidden");
-  openTab("home");
-  drawUser().catch(function(e){pop("Dash error",String(e&&e.message||e));});
+  el("popup").classList.add("hidden");el("auth-wrap").classList.add("hidden");el("dash-wrap").classList.remove("hidden");
+  openTab("home");drawUser().catch(function(e){pop("Dash error",String(e&&e.message||e));});
   if(window._t)clearInterval(window._t);
   window._t=setInterval(function(){drawUser().catch(function(){});},20000);
 }
+function openTab(id){
+  var ids=["home","deposit","profit","withdraw","team","guide"];
+  for(var i=0;i<ids.length;i++){
+    var t=ids[i],e=el("tab-"+t);
+    if(e)e.style.display=(t===id)?"block":"none";
+  }
+  document.querySelectorAll("[data-tab]").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-tab")===id);});
+}
+function tab(id){openTab(id);}
+function copyDep(){navigator.clipboard.writeText("0x8922295A6Ce4116133925253a32B47f2af019d4D").then(function(){pop("Copied","Address copied");});}
+</script>
 async function sendJoinOtp(){
   var username=el("su-user").value.trim(),email=el("su-email").value.trim(),phone=el("su-phone").value.trim(),pass=el("su-pass").value,refIn=el("su-ref").value.trim();
   if(!username||!email||!pass){pop("Error","Fill all fields");return;}
   pending={username:username,email:email,phone:phone,pass:pass,refIn:refIn,otp:otpCode()};
-  try{
-  await emailjs.send(EJ_SVC,EJ_TPL,{to_email:email,otp:pending.otp,passcode:pending.otp,email:email});
-}catch(e){
-  pop("OTP error", String(e&&e.text||e));
-  return;
-}
-  el("otp-hint").textContent="Code sent to "+email;
-  showScreen("otp");
+  try{await emailjs.send(EJ_SVC,EJ_TPL,{to_email:email,otp:pending.otp,passcode:pending.otp,email:email});}
+  catch(e){pop("OTP error",String(e&&e.text||e));return;}
+  el("otp-hint").textContent="Code sent to "+email;showScreen("otp");
 }
 async function verifyOtp(){
   if(!pending||el("otp-box").value.trim()!==pending.otp){pop("Error","Wrong OTP");return;}
@@ -370,97 +350,13 @@ function walkTree(rows,code,deep){
   kidsOf(rows,code).forEach(function(p){out.push({u:p,deep:deep});out=out.concat(walkTree(rows,p.ref_code,deep+1));});
   return out;
 }
-async function drawUser(){
-  if(!me)return;
-  await endTradeCheck();
-  if(el("bal"))el("bal").textContent=Number(me.balance||0).toFixed(2);
-  if(el("profit-home"))el("profit-home").textContent=Number(me.profit||0).toFixed(2);
-  if(el("profit-total"))el("profit-total").textContent=Number(me.profit||0).toFixed(2);
-  if(el("ref-code"))el("ref-code").textContent=me.ref_code||"";
-  if(el("ref-link"))el("ref-link").textContent=refLink();
-  if(el("wd-saved"))el("wd-saved").textContent=me.wd_address||"Not added";
-  var t=await sb.from("trades").select("*").eq("user_id",me.id).eq("paid",false).limit(1);
-  var tr=t.data&&t.data[0];
-  if(el("trade-left"))el("trade-left").textContent=tr&&tr.ends_at?fmtLeft(new Date(tr.ends_at).getTime()-Date.now()):"—";
-  if(el("dep-hist"))el("dep-hist").innerHTML="";
-    var cut=new Date(LOCK_AT);
-  var wh=await sb.from("withdrawals").select("*").eq("user_id",me.id).order("created_at",{ascending:false});
-  var list=(wh.data||[]).filter(function(w){return new Date(w.created_at||0)>=cut;});
-  if(el("wd-hist"))el("wd-hist").innerHTML=list.map(function(w){
-    var st=String(w.status||"PENDING").toUpperCase();
-    var when=w.created_at?new Date(w.created_at).toLocaleString():"";
-    var col=st==="APPROVED"?"#3ddc84":(st==="REJECTED"?"#e25b4a":"#d4af37");
-    return '<div class="flex justify-between py-2 border-b border-white/10 text-xs"><span>$'+Number(w.amount||0).toFixed(2)+' · '+when+'</span><span style="color:'+col+'">'+st+'</span></div>';
-  }).join("")||'<div class="text-xs text-white/40 mt-2">No withdraws yet</div>';
-  var all=await sb.from("profiles").select("id,username,ref_code,sponsor,start_pkg,balance");
-  var rows=all.data||[];
-  var depAll=await sb.from("deposits").select("user_id,amount,created_at,status");
-  function isAct(uid){
-    return (depAll.data||[]).some(function(d){
-      return d.user_id===uid && String(d.status||"").toUpperCase()==="APPROVED" && NEWP.indexOf(Number(d.amount))>=0;
-    });
-  }
-  var tree=(!me.ref_code)?[]:walkTree(rows,me.ref_code,1);
-  var nDir=tree.filter(function(x){return x.deep===1;}).length;
-  var nTeam=tree.length;
-  var htmlT='<div class="gold-border rounded-2xl p-3 mb-3 text-sm">Total team '+nTeam+' · Direct '+nDir+' · Down '+Math.max(0,nTeam-nDir)+'</div>';
-  var aDir=tree.filter(function(x){return x.deep===1&&isAct(x.u.id);}).length;
-  var aDn=tree.filter(function(x){return x.deep>1&&isAct(x.u.id);}).length;
-  var aTot=aDir+aDn,nxt=null;
-  for(var si=0;si<STEPS.length;si++){
-    var s=STEPS[si];
-    if(aTot<(s.tot||0)||(s.dir&&aDir<s.dir)||(s.down&&aDn<s.down)){nxt=s;break;}
-  }
-  var pct=nxt?Math.min(100,Math.round(aTot/(nxt.tot||1)*100)):100;
-  htmlT+='<div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div class="h-2 rounded bg-black/40 overflow-hidden mb-2"><div style="width:'+pct+'%;height:100%;background:#3ddc84"></div></div>';
-  htmlT+=nxt?'<div>Next $'+nxt.b+' bonus · Active '+aTot+'/'+nxt.tot+' · Dir '+aDir+'/'+(nxt.dir||0)+' · Down '+aDn+'/'+(nxt.down||0)+'</div>':'<div style="color:#3ddc84">All team bonuses unlocked</div>';
-  htmlT+='</div>';
-  var ranks=[{n:"Starter",dir:10,down:25,tot:35,pkg:0},{n:"Builder",dir:15,down:80,tot:95,pkg:250},{n:"Partner",dir:25,down:200,tot:225,pkg:500},{n:"Leader",dir:50,down:500,tot:550,pkg:2500},{n:"Crown",dir:50,down:1200,tot:1250,pkg:6000}];
-  var myPkg=0;(depAll.data||[]).forEach(function(d){if(d.user_id===me.id&&String(d.status).toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(d.amount))>=0&&new Date(d.created_at)>=new Date(LOCK_AT))myPkg=Math.max(myPkg,Number(d.amount));});
-  var rank="—";
-  ranks.forEach(function(r){if(aDir>=r.dir&&aDn>=r.down&&aTot>=r.tot&&myPkg>=r.pkg)rank=r.n;});
-  htmlT+='<div class="gold-border rounded-2xl p-3 mb-3 text-sm">Rank · <span class="text-nx-gold">'+rank+'</span> · Pack $'+myPkg+'</div>';
-  function row(x){var on=isAct(x.u.id);return '<div class="flex justify-between py-1 border-b border-white/10 text-xs"><span>'+(x.u.username||"—")+' · L'+x.deep+'</span><span>$'+Number(x.u.balance||0).toFixed(2)+(on?' <span style="color:#3ddc84">Active</span>':' <span style="color:#888">Inactive</span>')+'</span></div>';}
-  var act=tree.filter(function(x){return isAct(x.u.id);}),ina=tree.filter(function(x){return !isAct(x.u.id);});
-  htmlT+='<div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div class="font-semibold mb-2" style="color:#3ddc84">Active · '+act.length+'</div>';
-  act.forEach(function(x){htmlT+=row(x);});if(!act.length)htmlT+='<div class="text-xs text-white/40">No active members yet</div>';
-  htmlT+='</div><div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div class="font-semibold mb-2" style="color:#888">Inactive · '+ina.length+'</div>';
-  ina.forEach(function(x){htmlT+=row(x);});if(!ina.length)htmlT+='<div class="text-xs text-white/40">None</div>';
-  htmlT+='</div>';
-  if(el("team-list"))el("team-list").innerHTML=htmlT;
-  if(el("pkg-box"))el("pkg-box").innerHTML=NEWP.map(function(p){return '<div class="gold-border rounded-lg p-3 text-center"><div class="serif text-nx-gold text-lg">$'+p+'</div><div class="text-[10px] text-amber-100/60">3% daily</div></div>';}).join("");
-  var ok=await hasNewPkg();
-  if(el("quota-msg"))el("quota-msg").innerHTML=ok?("Active pack $"+myPkg+" · Team "+nTeam):"Package $0 · Account locked · Recharge $80 to activate";
-  var wn=el("wd-notice");
-  if(wn){if(!ok){wn.classList.remove("hidden");wn.innerHTML='<div class="serif text-nx-gold text-sm">Wallet locked. Activate the new $80 package to unlock funds and withdraw.</div>';}else{wn.classList.add("hidden");wn.innerHTML="";}}
-  var done=STEPS.filter(function(s){return aTot>=(s.tot||0)&&(!s.dir||aDir>=s.dir)&&(!s.down||aDn>=s.down);});
-  var payKey="tb_"+me.id,paid=(me.team_bonus_paid||localStorage.getItem(payKey)||"").split(",").filter(Boolean),addPay=0;
-  done.forEach(function(s){var k="t"+s.b;if(paid.indexOf(k)<0){paid.push(k);addPay+=s.b;}});
-  if(addPay>0&&!window._tbLock){
-    window._tbLock=true;
-    var nb=Number(me.balance||0)+addPay,nrb=Number(me.ref_bonus||0)+addPay;
-    me.balance=nb;me.ref_bonus=nrb;me.team_bonus_paid=paid.join(",");
-    localStorage.setItem(payKey,paid.join(","));
-    sb.from("profiles").update({balance:nb,ref_bonus:nrb,team_bonus_paid:paid.join(",")}).eq("id",me.id);
-    if(el("bal"))el("bal").textContent=nb.toFixed(2);
-  }
-}
-function openTab(id){
-["home","deposit","profit","withdraw","team","guide"].forEach(function(t){
-    var e=document.getElementById("tab-"+t);
-    if(e)e.style.display=(t===id)?"block":"none";
-  });
-}
-function tab(id){openTab(id)}
-  function copyDep(){var a="0x8922295A6Ce4116133925253a32B47f2af019d4D";navigator.clipboard.writeText(a).then(function(){pop("Copied","Address copied")});}
 async function submitHash(){
   if(!me)return;
   var amt=Number(el("dep-amt").value),hash=el("dep-hash").value.trim();
   if(!amt||amt<80){pop("Error","Minimum $80");return;}
   if(hash.length<10){pop("Error","Enter hash");return;}
   await sb.from("deposits").insert({user_id:me.id,amount:amt,hash:hash,status:"PENDING"});
-  el("dep-amt").value="";el("dep-hash").value="";
-  pop("Success","Deposit submitted");
+  el("dep-amt").value="";el("dep-hash").value="";pop("Success","Deposit submitted");
 }
 async function startTrade(){
   if(!me)return;
@@ -487,23 +383,74 @@ async function requestWd(){
   if(!(await hasNewPkg())){pop("Locked","Activate $80 package");return;}
   var amt=Number(el("wd-amt").value);
   if(isOld(me)){
-  var cap=oldCap(me), used=Number(me.old_wd||0), left=+(cap-used).toFixed(2);
-    var left=+(cap-used).toFixed(2);
-  if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return}
-  if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return}
-}
+    var cap=oldCap(me),used=Number(me.old_wd||0),left=+(cap-used).toFixed(2);
+    if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return;}
+    if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return;}
+  }
   var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
   if(!amt||amt>can){pop("Withdraw","Only profit + bonus. Available $"+can);return;}
-  if(Number(me.balance||0)<=0){pop("Wallet","Balance is $0");return}
-if(amt>Number(me.balance||0)){pop("Wallet","Not enough balance");return}
-var pend=await sb.from("withdrawals").select("id").eq("user_id",me.id).eq("status","PENDING");
-if(pend.data&&pend.data.length){pop("Wait","One withdraw already pending");return}
+  if(Number(me.balance||0)<=0){pop("Wallet","Balance is $0");return;}
+  if(amt>Number(me.balance||0)){pop("Wallet","Not enough balance");return;}
+  var pend=await sb.from("withdrawals").select("id").eq("user_id",me.id).eq("status","PENDING");
+  if(pend.data&&pend.data.length){pop("Wait","One withdraw already pending");return;}
   var fee=+(amt*0.12).toFixed(2),net=+(amt-fee).toFixed(2);
-  await sb.from("profiles").update({balance:Number(me.balance||0)-amt,profit:Math.max(0,Number(me.profit||0)-amt)}).eq("id",me.id);
+  var up={balance:Number(me.balance||0)-amt,profit:Math.max(0,Number(me.profit||0)-amt)};
+  if(isOld(me))up.old_wd=+(Number(me.old_wd||0)+amt).toFixed(2);
+  await sb.from("profiles").update(up).eq("id",me.id);
   var w=await sb.from("withdrawals").insert({user_id:me.id,amount:amt,fee:fee,net:net,address:me.wd_address,status:"PENDING"});
   if(w.error){await sb.from("profiles").update({balance:Number(me.balance||0)+amt}).eq("id",me.id);pop("Error",w.error.message);return;}
   try{emailjs.send(EJ_SVC,EJ_TPL,{to_email:"norvextrade@gmail.com",message:"WD "+(me.username||"")+" $"+amt});}catch(e){}
   await loadMe();drawUser();pop("Notice","Withdraw requested");
+}
+  async function drawUser(){
+  if(!me)return;
+  await endTradeCheck();
+  if(el("bal"))el("bal").textContent=Number(me.balance||0).toFixed(2);
+  if(el("profit-home"))el("profit-home").textContent=Number(me.profit||0).toFixed(2);
+  if(el("profit-total"))el("profit-total").textContent=Number(me.profit||0).toFixed(2);
+  if(el("ref-code"))el("ref-code").textContent=me.ref_code||"";
+  if(el("ref-link"))el("ref-link").textContent=refLink();
+  if(el("wd-saved"))el("wd-saved").textContent=me.wd_address||"Not added";
+  var t=await sb.from("trades").select("*").eq("user_id",me.id).eq("paid",false).limit(1);
+  var tr=t.data&&t.data[0];
+  if(el("trade-left"))el("trade-left").textContent=tr&&tr.ends_at?fmtLeft(new Date(tr.ends_at).getTime()-Date.now()):"—";
+  var cut=new Date(LOCK_AT);
+  var wh=await sb.from("withdrawals").select("*").eq("user_id",me.id).order("created_at",{ascending:false});
+  var list=(wh.data||[]).filter(function(w){return new Date(w.created_at||0)>=cut;});
+  if(el("wd-hist"))el("wd-hist").innerHTML=list.map(function(w){
+    var st=String(w.status||"PENDING").toUpperCase();
+    var when=w.created_at?new Date(w.created_at).toLocaleString():"";
+    var col=st==="APPROVED"?"#3ddc84":(st==="REJECTED"?"#e25b4a":"#d4af37");
+    return '<div class="flex justify-between py-2 border-b border-white/10 text-xs"><span>$'+Number(w.amount||0).toFixed(2)+' · '+when+'</span><span style="color:'+col+'">'+st+'</span></div>';
+  }).join("")||'<div class="text-xs text-white/40 mt-2">No withdraws yet</div>';
+  var all=await sb.from("profiles").select("id,username,ref_code,sponsor,start_pkg,balance");
+  var rows=all.data||[];
+  var depAll=await sb.from("deposits").select("user_id,amount,created_at,status");
+  function isAct(uid){return (depAll.data||[]).some(function(d){return d.user_id===uid&&String(d.status||"").toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(d.amount))>=0;});}
+  var tree=(!me.ref_code)?[]:walkTree(rows,me.ref_code,1);
+  var nDir=tree.filter(function(x){return x.deep===1;}).length,nTeam=tree.length;
+  var htmlT='<div class="gold-border rounded-2xl p-3 mb-3 text-sm">Total team '+nTeam+' · Direct '+nDir+' · Down '+Math.max(0,nTeam-nDir)+'</div>';
+  var aDir=tree.filter(function(x){return x.deep===1&&isAct(x.u.id);}).length;
+  var aDn=tree.filter(function(x){return x.deep>1&&isAct(x.u.id);}).length;
+  var aTot=aDir+aDn,nxt=null;
+  for(var si=0;si<STEPS.length;si++){var s=STEPS[si];if(aTot<(s.tot||0)||(s.dir&&aDir<s.dir)||(s.down&&aDn<s.down)){nxt=s;break;}}
+  var pct=nxt?Math.min(100,Math.round(aTot/(nxt.tot||1)*100)):100;
+  htmlT+='<div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div class="h-2 rounded bg-black/40 overflow-hidden mb-2"><div style="width:'+pct+'%;height:100%;background:#3ddc84"></div></div>';
+  htmlT+=nxt?'<div>Next $'+nxt.b+' bonus · Active '+aTot+'/'+nxt.tot+'</div>':'<div style="color:#3ddc84">All team bonuses unlocked</div>';
+  htmlT+='</div>';
+  function row(x){var on=isAct(x.u.id);return '<div class="flex justify-between py-1 border-b border-white/10 text-xs"><span>'+(x.u.username||"—")+' · L'+x.deep+'</span><span>$'+Number(x.u.balance||0).toFixed(2)+(on?' <span style="color:#3ddc84">Active</span>':' <span style="color:#888">Inactive</span>')+'</span></div>';}
+  var act=tree.filter(function(x){return isAct(x.u.id);}),ina=tree.filter(function(x){return !isAct(x.u.id);});
+  htmlT+='<div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div style="color:#3ddc84">Active · '+act.length+'</div>';
+  act.forEach(function(x){htmlT+=row(x);});if(!act.length)htmlT+='<div class="text-xs text-white/40">No active members yet</div>';
+  htmlT+='</div><div class="gold-border rounded-2xl p-3 mb-3 text-sm"><div style="color:#888">Inactive · '+ina.length+'</div>';
+  ina.forEach(function(x){htmlT+=row(x);});htmlT+='</div>';
+  if(el("team-list"))el("team-list").innerHTML=htmlT;
+  if(el("pkg-box"))el("pkg-box").innerHTML=NEWP.map(function(p){return '<div class="gold-border rounded-lg p-3 text-center"><div class="serif text-nx-gold text-lg">$'+p+'</div><div class="text-[10px]">3% daily</div></div>';}).join("");
+  var ok=await hasNewPkg();
+  var myPkg=0;(depAll.data||[]).forEach(function(d){if(d.user_id===me.id&&String(d.status).toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(d.amount))>=0)myPkg=Math.max(myPkg,Number(d.amount));});
+  if(el("quota-msg"))el("quota-msg").innerHTML=ok?("Active pack $"+myPkg+" · Team "+nTeam):"Package $0 · Account locked · Recharge $80 to activate";
+  var wn=el("wd-notice");
+  if(wn){if(!ok){wn.classList.remove("hidden");wn.innerHTML="Wallet locked. Activate $80 package.";}else{wn.classList.add("hidden");wn.innerHTML="";}}
 }
 async function renderAdmin(){
   var prof=await sb.from("profiles").select("id,username,balance,wd_address,email");
@@ -513,51 +460,40 @@ async function renderAdmin(){
   if(el("ad-wallets"))el("ad-wallets").textContent="$"+wal.toFixed(2);
   var deps=await sb.from("deposits").select("*,profiles(username)").order("created_at",{ascending:false});
   var allD=deps.data||[];
-  var pend=allD.filter(function(d){return d.status==="PENDING";});
-  if(el("ad-pend"))el("ad-pend").textContent=pend.length;
-    if(el("ad-dep-rows"))el("ad-dep-rows").innerHTML=allD.map(function(d){
-    var name=(d.profiles&&d.profiles.username)||"—";
-    var st=d.status||"—";
-    var btn=st==="PENDING"
-      ?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1 font-semibold">Approve</button><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1 font-semibold">Reject</button></div>'
-      :'<div class="mt-1 '+(st==="APPROVED"?"text-green-400":"text-red-400")+'">'+st+'</div>';
-    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+d.amount+'</div><div class="break-all text-amber-100/60 mt-1">'+(d.hash||"—")+'</div>'+btn+'</div>';
-  }).join("")||'<div class="text-white/40">No deposits</div>';
+  if(el("ad-pend"))el("ad-pend").textContent=allD.filter(function(d){return d.status==="PENDING";}).length;
+  if(el("ad-dep-rows"))el("ad-dep-rows").innerHTML=allD.map(function(d){
+    var name=(d.profiles&&d.profiles.username)||"—",st=d.status||"—";
+    var btn=st==="PENDING"?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1">Approve</button><button type="button" onclick="adminDep(\''+d.id+'\',\''+d.user_id+'\','+d.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1">Reject</button></div>':'<div class="mt-1">'+st+'</div>';
+    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+d.amount+'</div><div class="break-all">'+(d.hash||"—")+'</div>'+btn+'</div>';
+  }).join("")||"No deposits";
   var wds=await sb.from("withdrawals").select("*,profiles(username,wd_address)").order("created_at",{ascending:false});
-  var allW=wds.data||[];
-  if(el("ad-wd-rows"))el("ad-wd-rows").innerHTML=allW.map(function(w){
-    var name=(w.profiles&&w.profiles.username)||"—";
-    var addr=w.address||(w.profiles&&w.profiles.wd_address)||"—";
-    var st=w.status||"—";
-    var btn=st==="PENDING"
-      ?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1 font-semibold">Approve</button><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1 font-semibold">Reject</button></div>'
-      :'<div class="mt-1 '+(st==="APPROVED"?"text-green-400":"text-red-400")+'">'+st+'</div>';
-    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+w.amount+'</div><div class="break-all text-amber-100/60 mt-1">'+addr+'</div>'+btn+'</div>';
-  }).join("")||'<div class="text-white/40">No withdraws</div>';
+  if(el("ad-wd-rows"))el("ad-wd-rows").innerHTML=(wds.data||[]).map(function(w){
+    var name=(w.profiles&&w.profiles.username)||"—",addr=w.address||(w.profiles&&w.profiles.wd_address)||"—",st=w.status||"—";
+    var btn=st==="PENDING"?'<div class="flex gap-2 mt-2"><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'APPROVED\')" class="bg-[#3ddc84] text-black rounded-full px-4 py-1">Approve</button><button type="button" onclick="adminWd(\''+w.id+'\',\''+w.user_id+'\','+w.amount+',\'REJECTED\')" class="bg-[#e25b4a] text-white rounded-full px-4 py-1">Reject</button></div>':'<div class="mt-1">'+st+'</div>';
+    return '<div class="gold-border rounded-xl p-3"><div class="text-nx-gold">'+name+' · $'+w.amount+'</div><div class="break-all">'+addr+'</div>'+btn+'</div>';
+  }).join("")||"No withdraws";
 }
 async function adminDep(id,uid,amt,st){
   var cur=await sb.from("deposits").select("status").eq("id",id).limit(1);
   if(cur.data&&cur.data[0]&&cur.data[0].status!=="PENDING"){renderAdmin();return;}
   await sb.from("deposits").update({status:st}).eq("id",id);
   if(st==="APPROVED"){
-    var p=await sb.from("profiles").select("balance,sponsor,ref_bonus").eq("id",uid).limit(1);
+    var p=await sb.from("profiles").select("*").eq("id",uid).limit(1);
     if(p.data&&p.data[0]){
-      await sb.from("profiles").update({balance:Number(p.data[0].balance||0)+Number(amt)}).eq("id",uid);
-      if(Number(amt)>=80){
-  var row=p.data[0];
-  if(row.is_new!==true && Number(row.old_lock||0)>0 && Number(row.old_unlock||0)<50){
-    await sb.from("profiles").update({old_unlock:50}).eq("id",row.id);
-  }
-}
-      var code=(p.data[0].sponsor||"").trim();
+      var row=p.data[0];
+      await sb.from("profiles").update({balance:Number(row.balance||0)+Number(amt)}).eq("id",uid);
+      if(Number(amt)>=80&&row.is_new!==true&&Number(row.old_lock||0)>0&&Number(row.old_unlock||0)<50){
+        await sb.from("profiles").update({old_unlock:50}).eq("id",row.id);
+      }
+      var code=(row.sponsor||"").trim();
       if(code){
-        var sp=await sb.from("profiles").select("id,balance,ref_bonus").eq("ref_code",code).limit(1);
+        var sp=await sb.from("profiles").select("*").eq("ref_code",code).limit(1);
         if(sp.data&&sp.data[0]&&sp.data[0].id!==uid){
           var b=+(Number(amt)*0.05).toFixed(2);
           await sb.from("profiles").update({balance:Number(sp.data[0].balance||0)+b,ref_bonus:Number(sp.data[0].ref_bonus||0)+b}).eq("id",sp.data[0].id);
-          if(Number(amt)>=80 && sp.data[0].is_new!==true && Number(sp.data[0].old_lock||0)>0 && Number(sp.data[0].old_unlock||0)<100){
-  await sb.from("profiles").update({old_unlock:100}).eq("id",sp.data[0].id);
-}
+          if(Number(amt)>=80&&sp.data[0].is_new!==true&&Number(sp.data[0].old_lock||0)>0&&Number(sp.data[0].old_unlock||0)<100){
+            await sb.from("profiles").update({old_unlock:100}).eq("id",sp.data[0].id);
+          }
         }
       }
     }
@@ -574,71 +510,42 @@ async function adminWd(id,uid,amt,st){
 }
 function seedCandles(){
   candles=[];px=67840+Math.random()*400;
-  for(var i=0;i<80;i++){
-        var o=px,ch=(Math.random()-0.48)*42,c=o+ch,h=Math.max(o,c)+Math.random()*18,l=Math.min(o,c)-Math.random()*18;
-      candles.push({o:o,h:h,l:l,c:c});px=c;  
-    candles.push({o:o,h:h,l:l,c:c});px=c;
+  for(var i=0;i<70;i++){
+    var o=px,ch=(Math.random()-0.48)*42,c=o+ch;
+    candles.push({o:o,h:Math.max(o,c)+Math.random()*18,l:Math.min(o,c)-Math.random()*18,c:c});px=c;
   }
 }
 function drawOHLC(cid,pxid,hh){
   var cv=el(cid);if(!cv||!cv.parentElement)return;
-  var box=cv.parentElement;
-  var w=Math.max(260,Math.floor(box.clientWidth-24));
-  var h=hh||160;
-cv.style.width="100%";
-  cv.style.height=h+"px";
+  var box=cv.parentElement,w=Math.max(260,Math.floor(box.clientWidth||300)),h=hh||160;
   var dpr=Math.min(2,window.devicePixelRatio||1);
-  cv.width=Math.floor(w*dpr);
-  cv.height=Math.floor(h*dpr);
-  var g=cv.getContext("2d");
-  g.setTransform(dpr,0,0,dpr,0,0);
+  cv.width=Math.floor(w*dpr);cv.height=Math.floor(h*dpr);
+  var g=cv.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);
   g.fillStyle="#07140c";g.fillRect(0,0,w,h);
-  g.strokeStyle="#1a3324";
-  for(var y=0;y<5;y++){g.beginPath();g.moveTo(0,h*y/4);g.lineTo(w,h*y/4);g.stroke();}
   if(!candles.length)return;
   var lo=Math.min.apply(null,candles.map(function(c){return c.l;}));
   var hi=Math.max.apply(null,candles.map(function(c){return c.h;}));
   var span=hi-lo||1,gap=(w-10)/candles.length,bw=Math.max(2,gap*0.62);
   candles.forEach(function(c,i){
     var x=6+i*gap+bw/2;
-    var yH=8+(1-(c.h-lo)/span)*(h-16);
-    var yL=8+(1-(c.l-lo)/span)*(h-16);
-    var yO=8+(1-(c.o-lo)/span)*(h-16);
-    var yC=8+(1-(c.c-lo)/span)*(h-16);
-    var up=c.c>=c.o;
-    g.strokeStyle=up?"#3ddc84":"#e25b4a";
-    g.fillStyle=up?"#3ddc84":"#e25b4a";
+    var yH=8+(1-(c.h-lo)/span)*(h-16),yL=8+(1-(c.l-lo)/span)*(h-16);
+    var yO=8+(1-(c.o-lo)/span)*(h-16),yC=8+(1-(c.c-lo)/span)*(h-16);
+    var up=c.c>=c.o;g.strokeStyle=up?"#3ddc84":"#e25b4a";g.fillStyle=g.strokeStyle;
     g.beginPath();g.moveTo(x,yH);g.lineTo(x,yL);g.stroke();
     g.fillRect(x-bw/2,Math.min(yO,yC),bw,Math.max(1,Math.abs(yC-yO)));
   });
-  if(pxid&&el(pxid)){
-    el(pxid).textContent=px.toFixed(2);
-    el(pxid).className=candles[candles.length-1].c>=candles[candles.length-1].o?"text-green-400":"text-red-400";
-  }
+  if(pxid&&el(pxid)){el(pxid).textContent=px.toFixed(2);}
 }
 function tickMarket(){
   if(!candles.length)seedCandles();
-  var last=candles[candles.length-1];
-  var ch=(Math.random()-0.49)*22;
-  var o=last.c,c=o+ch;
+  var last=candles[candles.length-1],ch=(Math.random()-0.49)*22,o=last.c,c=o+ch;
   candles.push({o:o,h:Math.max(o,c)+Math.random()*8,l:Math.min(o,c)-Math.random()*8,c:c});
-  if(candles.length>70)candles.shift();
-  px=c;
-  drawOHLC("mkt","px-home",160);
-  drawOHLC("mkt-land","px-land",160);
-}
-function tickMarket(){
-  if(!candles.length)seedCandles();
-  var last=candles[candles.length-1];
-  var ch=(Math.random()-0.49)*28;
-  var o=last.c,c=o+ch,h=Math.max(o,c)+Math.random()*10,l=Math.min(o,c)-Math.random()*10;
-  candles.push({o:o,h:h,l:l,c:c});if(candles.length>80)candles.shift();px=c;
-  drawOHLC("mkt","px-home");drawOHLC("mkt-live","px-live");
-  var cl=el("mkt-land");if(cl){cl.width=el("mkt-land").clientWidth||300;drawOHLC("mkt-land","px-land");}
+  if(candles.length>70)candles.shift();px=c;
+  drawOHLC("mkt","px-home",160);drawOHLC("mkt-land","px-land",160);
 }
 window.addEventListener("load",async function(){
   var q=new URLSearchParams(location.search).get("ref");
-  if(q&&el("su-ref")){el("su-ref").value=q;}
+  if(q&&el("su-ref"))el("su-ref").value=q;
   seedCandles();tickMarket();setInterval(tickMarket,1400);
   if(location.hash==="#admin"){showScreen("adminlogin");return;}
   if(q){showScreen("signup");return;}
@@ -646,6 +553,6 @@ window.addEventListener("load",async function(){
   if(me)enterDash();else showScreen("landing");
 });
 window.addEventListener("hashchange",function(){if(location.hash==="#admin")showScreen("adminlogin");});
-</script>
+  </script>
 </body>
 </html>
