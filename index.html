@@ -443,7 +443,13 @@ async function requestWd(){
         var myPkg=0;(depAll.data||[]).forEach(function(d){
       if((d.status==="SUCCESSFUL"||d.status==="APPROVED")&&Number(d.amount)>myPkg)myPkg=Number(d.amount);
     });
-  function isAct(uid){return (depAll.data||[]).some(function(d){return d.user_id===uid&&String(d.status||"").toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(d.amount))>=0;});}
+      function isAct(uid){
+      return (depAll.data||[]).some(function(d){
+        var id=d.user_id||(d.profiles&&d.profiles.id);
+        var ok=d.status==="SUCCESSFUL"||d.status==="APPROVED";
+        return id===uid&&ok&&Number(d.amount)>=80&&new Date(d.created_at)>=new Date(LOCK_AT);
+      });
+    }
   var tree=(!me.ref_code)?[]:walkTree(rows,me.ref_code,1);
   var nDir=tree.filter(function(x){return x.deep===1;}).length,nTeam=tree.length;
   var htmlT='<div class="gold-border rounded-2xl p-3 mb-3 text-sm">Total team '+nTeam+' · Direct '+nDir+' · Down '+Math.max(0,nTeam-nDir)+'</div>';
