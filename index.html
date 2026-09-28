@@ -186,20 +186,19 @@ canvas#mkt{width:100%;height:160px;display:block}
 </div>
 <div class="serif text-nx-gold mt-4 mb-2">TEAM BONUS</div>
 <div class="text-xs space-y-1">
-<div>$200 · Direct 5 · Down 15 · Total 20</div>
-<div>$500 · Direct 15 · Down 80 · Total 95</div>
-<div>$2500 · Direct 25 · Down 200 · Total 225</div>
-<div>$5000 · Direct 50 · Down 500 · Total 550</div>
-<div>$10000 · Direct 50 · Down 1200 · Total 1250</div>
-<div>$25000 · Total team 2500</div>
-</div>
-<div class="serif text-nx-gold mt-4 mb-2">RANKS</div>
-<div class="text-xs space-y-1">
-<div>Starter · Direct 10 · Down 25 · Total 35</div>
-<div>Builder · $250 pack + Direct 15 · Down 80 · Total 95</div>
-<div>Partner · $500 pack + Direct 25 · Down 200 · Total 225</div>
-<div>Leader · $2500 pack + Direct 50 · Down 500 · Total 550</div>
-<div>Crown · $6000 pack + Direct 50 · Down 1200 · Total 1250</div>
+          <div>$200 · Direct 5 · Down 20 · Total 25 · Pack $250</div>
+          <div>$500 · Direct 15 · Down 50 · Total 65 · Pack $500</div>
+          <div>$2500 · Direct 25 · Down 110 · Total 135 · Pack $1500</div>
+          <div>$5000 · Direct 50 · Down 280 · Total 330 · Pack $2500</div>
+          <div>$10000 · Direct 70 · Down 580 · Total 650 · Pack $6000</div>
+        </div>
+        <div class="serif text-nx-gold mt-4 mb-2">RANKS</div>
+        <div class="text-xs space-y-1">
+          <div>Builder · $250 pack · Direct 5 · Down 20 · Total 25</div>
+          <div>Partner · $500 pack · Direct 15 · Down 50 · Total 65</div>
+          <div>Leader · $1500 pack · Direct 25 · Down 110 · Total 135</div>
+          <div>Crown · $2500 pack · Direct 50 · Down 280 · Total 330</div>
+          <div>Elite · $6000 pack · Direct 70 · Down 580 · Total 650</div>
 </div>
 </div>
 </section>
@@ -240,7 +239,7 @@ var pending=null,me=null,isAdmin=false;
 var DEP_ADDR="0x8922295A6Ce4116133925253a32B47f2af019d4D";
 var NEWP=[80,250,500,1500,2500,6000];
 var LOCK_AT="2026-09-24T13:00:00.000Z";
-var STEPS=[{b:200,dir:5,down:15,tot:20},{b:500,dir:15,down:80,tot:95},{b:2500,dir:25,down:200,tot:225},{b:5000,dir:50,down:500,tot:550},{b:10000,dir:50,down:1200,tot:1250},{b:25000,dir:0,down:0,tot:2500}];
+var STEPS=[{b:200,dir:5,down:20,tot:25,pack:250},{b:500,dir:15,down:50,tot:65,pack:500},{b:2500,dir:25,down:110,tot:135,pack:1500},{b:5000,dir:50,down:280,tot:330,pack:2500},{b:10000,dir:70,down:580,tot:650,pack:6000}];
 var candles=[],px=67840;
 if(window.emailjs){try{emailjs.init({publicKey:EJ_PUB});}catch(e){}}
 function el(id){return document.getElementById(id);}
