@@ -257,8 +257,11 @@ function isOld(u){return u&&u.is_new!==true&&Number(u.old_lock||0)>0;}
 function oldCap(u){if(!isOld(u))return Infinity;return +(Number(u.old_lock)*Number(u.old_unlock||0)/100).toFixed(2);}
 async function hasNewPkg(){
   if(!me)return false;
-  var d=await sb.from("deposits").select("amount,status").eq("user_id",me.id);
-  return (d.data||[]).some(function(x){return String(x.status||"").toUpperCase()==="APPROVED"&&NEWP.indexOf(Number(x.amount))>=0;});
+  var d=await sb.from("deposits").select("amount,status,created_at").eq("user_id",me.id);
+  return (d.data||[]).some(function(x){
+    var ok=x.status==="SUCCESSFUL"||x.status==="APPROVED";
+    return ok&&Number(x.amount)>=80&&new Date(x.created_at)>=new Date(LOCK_AT);
+  });
 }
 async function loadMe(){
   var s=await sb.auth.getUser();
@@ -392,10 +395,16 @@ async function requestWd(){
     if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return;}
     if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return;}
   }
-  var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
-  if(!amt||amt>can){pop("Withdraw","Only profit + bonus. Available $"+can);return;}
-  if(Number(me.balance||0)<=0){pop("Wallet","Balance is $0");return;}
-  if(amt>Number(me.balance||0)){pop("Wallet","Not enough balance");return;}
+      var locked=(await hasNewPkg())?80:0;
+    var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
+    can=Math.min(can,+(Number(me.balance||0)-locked).toFixed(2));
+    if(can<0)can=0;
+    if(!amt||amt<10){pop("Minimum","Min $10");return;}
+    if(amt>can+0.0001){
+      pop("Locked","Package stays $"+locked+". Max $"+can.toFixed(2));
+      return;
+    }
+    if(amt>Number(me.balance||0)){pop("Wallet","Not enough");return;}
   var pend=await sb.from("withdrawals").select("id").eq("user_id",me.id).eq("status","PENDING");
   if(pend.data&&pend.data.length){pop("Wait","One withdraw already pending");return;}
   var fee=+(amt*0.12).toFixed(2),net=+(amt-fee).toFixed(2);
