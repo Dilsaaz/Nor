@@ -394,10 +394,15 @@ async function requestWd(){
     if(cap<=0){pop("Old fund","Buy $80 package. Then 50% old fund opens");return;}
     if(amt>left){pop("Old fund","Now only $"+Math.max(0,left)+". Rest after 1 direct $80");return;}
   }
-      var locked=(await hasNewPkg())?80:0;
-    var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)).toFixed(2);
-    can=Math.min(can,+(Number(me.balance||0)-locked).toFixed(2));
-    if(can<0)can=0;
+        var locked=(await hasNewPkg())?80:0;
+  var can=+(Number(me.profit||0)+Number(me.ref_bonus||0)+Number(me.team||0));
+  if(isOld(me)){
+    var cap=oldCap(me),used=Number(me.old_wd||0);
+    var allow=down80()?cap:cap*0.5;
+    can=can+Math.max(0,allow-used);
+  }
+  can=Math.min(can,+(Number(me.balance||0)-locked));
+  if(can<0)can=0;
     if(!amt||amt<10){pop("Minimum","Min $10");return;}
     if(amt>can+0.0001){
       pop("Locked","Package stays $"+locked+". Max $"+can.toFixed(2));
@@ -414,6 +419,15 @@ async function requestWd(){
   if(w.error){await sb.from("profiles").update({balance:Number(me.balance||0)+amt}).eq("id",me.id);pop("Error",w.error.message);return;}
   try{emailjs.send(EJ_SVC,EJ_TPL,{to_email:"norvextrade@gmail.com",message:"WD "+(me.username||"")+" $"+amt});}catch(e){}
   await loadMe();drawUser();pop("Notice","Withdraw requested");
+}
+  function down80(){
+  try{
+    var kids=kidsOf(me.id)||[];
+    for(var i=0;i<kids.length;i++){
+      if(isAct(kids[i].id||kids[i]))return true;
+    }
+  }catch(e){}
+  return false;
 }
   async function drawUser(){
   if(!me)return;
