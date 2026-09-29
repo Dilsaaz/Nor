@@ -397,7 +397,7 @@ async function requestWd(){
     var allow=down80()?cap:cap*0.5;
     can=can+Math.max(0,allow-used);
   }
-      if(isOld(me)&&Number(me.balance||0)<=80)locked=0;
+        if(Number(me.balance||0)<=80){locked=0;can=Number(me.balance||0);}
   can=Math.min(can,+(Number(me.balance||0)-locked));
   if(can<0)can=0;
     if(!amt||amt<10){pop("Minimum","Min $10");return;}
