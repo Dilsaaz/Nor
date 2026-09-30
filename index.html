@@ -337,7 +337,7 @@ async function doLogin(){
 }
 async function endTradeCheck(){
   if(!me)return;
-  var t=await sb.from("trades").select("*").eq("user_id",me.id).eq("paid",false);
+      var t=await sb.from("trades").select("*").eq("user_id",me.id).eq("paid",false);
   if(!t.data)return;
   for(var i=0;i<t.data.length;i++){
     var row=t.data[i];
@@ -345,7 +345,7 @@ async function endTradeCheck(){
     var inv=Number(row.amount||row.amt||0);
     var gain=+(inv*0.03).toFixed(2);
     var back=+(inv+gain).toFixed(2);
-    await sb.from("trades").update({paid:true}).eq("id",row.id);
+        await sb.from("trades").update({paid:true}).eq("id",row.id);
     me.balance=+(Number(me.balance||0)+back).toFixed(2);
     me.profit=+(Number(me.profit||0)+gain).toFixed(2);
     await sb.from("profiles").update({balance:me.balance,profit:me.profit}).eq("id",me.id);
